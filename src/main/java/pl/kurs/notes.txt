@@ -1,0 +1,18 @@
+Sytuacja wygląda tak:
+
+Mamy w systemie jakichś klientow, kazdy klient ma imie, nazwisko, email, miasto
+Mamy jakies ksiazki, kazda ksiazka ma autora, tytuł, kategorie, ilosc stron
+
+Klient moze subskrybuować ksiażki przez kategorie i/lub autora.
+co to znaczy?
+to znaczy ze jak pracownik doda jakiś horror, a klient subskrybuje horror to dostanie maila odnosnie tego,
+ze zostal dodany nowy horror.
+albo jak subskrybuje Tolkiena, to jak pojawi sie nowa ksiazka tolkiena to tez dostanie emaila.
+
+Stworz api do:
+- rejestrowania klientow z potwierdzeniem adresu email.
+- dodawanie ksiazki
+- tworzenie/anulowanie subksyrbcji ksiazek.
+
+przy projektowaniu rozwiazania miej na uwadze ze pracujesz dla biblioteki publicznej
+gdzie jest wolumen milionow ksiazek i milionow klientow.
