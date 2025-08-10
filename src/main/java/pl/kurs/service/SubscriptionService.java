@@ -1,6 +1,8 @@
 package pl.kurs.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.kurs.dto.SubscriptionDto;
@@ -10,7 +12,7 @@ import pl.kurs.entity.SubscriptionType;
 import pl.kurs.mapper.SubscriptionMapper;
 import pl.kurs.repository.SubscriptionRepository;
 
-import java.util.List;
+import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
@@ -39,9 +41,7 @@ public class SubscriptionService {
         subscriptionRepository.deleteById(id);
     }
 
-    @Transactional(readOnly = true)
-    public List<String> findEmailsBySubscriptionTypeAndValue(SubscriptionType subscriptionType, String name) {
-        return subscriptionRepository.findEmailsBySubscriptionTypeAndSubscriptionValue(subscriptionType, name);
+    public Slice<Object[]> findEmailsAndBooksForDatePaginated(LocalDate date, PageRequest pageRequest) {
+        return subscriptionRepository.findEmailsAndBooksForDatePaginated(date, pageRequest);
     }
-
 }

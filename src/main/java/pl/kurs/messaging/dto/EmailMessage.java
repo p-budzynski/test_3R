@@ -14,6 +14,7 @@ public class EmailMessage {
     private String subject;
     private String content;
     private EmailType type;
+    private int retryCount = 0;
 
     public enum EmailType {
         VERIFICATION, NEW_BOOK_NOTIFICATION

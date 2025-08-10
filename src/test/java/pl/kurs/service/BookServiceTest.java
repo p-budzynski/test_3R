@@ -12,6 +12,7 @@ import pl.kurs.entity.Category;
 import pl.kurs.mapper.BookMapper;
 import pl.kurs.repository.BookRepository;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -42,8 +43,8 @@ public class BookServiceTest {
         BookDto expectedDto = new BookDto(2L, "Test author", "Test title", 1L, 300);
         BookDto bookDto = new BookDto(null, "Test author", "Test title", 1L, 300);
         Category category = new Category(1L, "Fantasy");
-        Book book = new Book(null, "Test author", "Test title", null, 300);
-        Book savedBook = new Book(2L, "Test author", "Test title", category, 300);
+        Book book = new Book(null, "Test author", "Test title", null, 300, LocalDate.of(2025, 1, 15));
+        Book savedBook = new Book(2L, "Test author", "Test title", category, 300, LocalDate.of(2025, 1, 15));
 
         when(categoryServiceMock.findById(1L)).thenReturn(category);
         when(bookMapperMock.dtoToEntity(bookDto)).thenReturn(book);
@@ -65,7 +66,7 @@ public class BookServiceTest {
     @Test
     void shouldFindBookById() {
         // given
-        Book savedBook = new Book(2L, "Test author", "Test title", new Category(), 300);
+        Book savedBook = new Book(2L, "Test author", "Test title", new Category(), 300, LocalDate.of(2025, 1, 15));
         Long bookId = 2L;
         when(bookRepositoryMock.findById(bookId)).thenReturn(Optional.of(savedBook));
 
@@ -75,9 +76,12 @@ public class BookServiceTest {
         //then
         assertThat(result).isPresent();
         assertThat(result.get()).isEqualTo(savedBook);
-        assertThat(result.get().getId()).isEqualTo(2L);
-        assertThat(result.get().getTitle()).isEqualTo("Test title");
-        assertThat(result.get().getAuthor()).isEqualTo("Test author");
+        assertThat(result.get().getId()).isEqualTo(savedBook.getId());
+        assertThat(result.get().getAuthor()).isEqualTo(savedBook.getAuthor());
+        assertThat(result.get().getTitle()).isEqualTo(savedBook.getTitle());
+        assertThat(result.get().getCategory()).isEqualTo(savedBook.getCategory());
+        assertThat(result.get().getPageCount()).isEqualTo(savedBook.getPageCount());
+        assertThat(result.get().getAddedDate()).isEqualTo(savedBook.getAddedDate());
     }
 
 }

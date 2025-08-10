@@ -71,7 +71,7 @@ public class BookMapperTest {
     }
 
     private Book createTestBook() {
-        return new Book(1L, "George Orwell", "Rok 1984", new Category(1L, "Science Fiction"), 328);
+        return new Book(1L, "George Orwell", "Rok 1984", new Category(1L, "Science Fiction"), 328, null);
     }
 
     private BookDto createTestBookDto() {

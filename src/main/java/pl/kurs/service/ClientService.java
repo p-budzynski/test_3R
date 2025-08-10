@@ -35,7 +35,6 @@ public class ClientService {
         return clientMapper.entityToDto(savedClient);
     }
 
-    @Transactional
     public boolean verifyEmail(String token) {
         return clientRepository.findByVerificationToken(token)
                 .map(client -> {
@@ -47,11 +46,13 @@ public class ClientService {
                 .orElse(false);
     }
 
+    @Transactional(readOnly = true)
     public Client getClientById(Long id) {
         return clientRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: " + id));
     }
 
+    @Transactional(readOnly = true)
     public Client getVerifiedClientById(Long id) {
         Client client = getClientById(id);
         if (!client.getEmailVerified()) {

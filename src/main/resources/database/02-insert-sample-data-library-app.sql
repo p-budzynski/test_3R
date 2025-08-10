@@ -22,12 +22,12 @@ INSERT INTO clients (first_name, last_name, email, city, email_verified, verific
 ('Katarzyna', 'Mazur', 'katarzyna.mazur@example.com', 'Poznań', true, NULL);
 
 
-INSERT INTO books (author, title, book_category, page_count) VALUES
-('George Orwell', 'Rok 1984', 2, 328),
-('Haruki Murakami', 'Norwegian Wood', 1, 296),
-('Stephen Hawking', 'Krótka historia czasu', 8, 212),
-('Yuval Noah Harari', 'Sapiens: Od zwierząt do bogów', 6, 443),
-('Andrew S. Tanenbaum', 'Systemy operacyjne', 9, 1136);
+INSERT INTO books (author, title, book_category, page_count, added_date) VALUES
+('George Orwell', 'Rok 1984', 2, 328, CURRENT_DATE),
+('Haruki Murakami', 'Norwegian Wood', 1, 296, CURRENT_DATE),
+('Stephen Hawking', 'Krótka historia czasu', 8, 212, CURRENT_DATE),
+('Yuval Noah Harari', 'Sapiens: Od zwierząt do bogów', 6, 443, CURRENT_DATE),
+('Andrew S. Tanenbaum', 'Systemy operacyjne', 9, 1136, CURRENT_DATE);
 
 
 INSERT INTO subscriptions (client_id, subscription_type, subscription_value) VALUES

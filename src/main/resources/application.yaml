@@ -10,6 +10,7 @@ spring:
             poolName: SpringBootJPAHikariCP
             maxLifetime: 2000000
             connectionTimeout: 30000
+
     jpa:
         hibernate:
             dll-auto: none
@@ -18,9 +19,11 @@ spring:
         properties:
             hibernate:
                 format_sql: true
+
     liquibase:
         change-log: classpath:liquibase-changeLog.xml
         enabled: true
+
     mail:
         host: localhost
         port: 1025
@@ -32,6 +35,7 @@ spring:
                     auth: false
                     starttls:
                         enable: false
+
     rabbitmq:
         host: localhost
         port: 5672
@@ -41,4 +45,11 @@ server:
     port: 8081
 
 notification:
-    verificationUrl: http://localhost:8081/clients/verification?token=
+    verification-url: http://localhost:8081/clients/verification?token=
+    batch-size: ${NOTIFICATION_BATCH_SIZE:1000}
+    max-retries: ${EMAIL_MAX_RETRIES:3}
+    token-expiry-hours: ${TOKEN_EXPIRY_HOURS:24}
+
+app:
+    scheduling:
+        daily-notifications: "0 0 0 * * *"

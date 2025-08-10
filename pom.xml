@@ -187,13 +187,12 @@
                 <configuration>
                     <outputDirectory>${project.build.directory}/jacoco</outputDirectory>
                     <excludes>
-                        <exclude>pl/kurs/configuration/*</exclude>
+                        <exclude>pl/kurs/config/*</exclude>
                         <exclude>pl/kurs/dto/*</exclude>
                         <exclude>pl/kurs/entity/*</exclude>
                         <exclude>pl/kurs/event/*</exclude>
                         <exclude>pl/kurs/exception/*</exclude>
-                        <exclude>pl/kurs/handler/*</exclude>
-                        <exclude>pl/kurs/messaging/**</exclude>
+                        <exclude>pl/kurs/messaging/dto/*</exclude>
                         <exclude>pl/kurs/postman_collections/*</exclude>
                         <exclude>pl/kurs/validation/*</exclude>
                         <exclude>pl/kurs/Application.class</exclude>

@@ -3,10 +3,13 @@ package pl.kurs.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
+
 @Entity
 @Table(name = "books",indexes = {
         @Index(name = "idx_book_author", columnList = "author"),
         @Index(name = "idx_book_category", columnList = "book_category"),
+        @Index(name = "idx_book_added_date", columnList = "added_date")
 })
 @Data
 @Builder
@@ -29,5 +32,15 @@ public class Book {
 
     @Column(name = "page_count")
     private Integer pageCount;
+
+    @Column(name = "added_date", nullable = false)
+    private LocalDate addedDate;
+
+    @PrePersist
+    protected void onCreate() {
+        if (addedDate == null) {
+            addedDate = LocalDate.now();
+        }
+    }
 
 }

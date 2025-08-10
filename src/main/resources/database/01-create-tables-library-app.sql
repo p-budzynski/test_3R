@@ -26,11 +26,13 @@ CREATE TABLE books (
     title VARCHAR(255) NOT NULL,
     book_category BIGINT NOT NULL,
     page_count INTEGER,
+    added_date DATE NOT NULL,
     CONSTRAINT fk_books_category FOREIGN KEY (book_category) REFERENCES categories(id)
 );
 
 CREATE INDEX idx_book_author ON books(author);
 CREATE INDEX idx_book_category ON books(book_category);
+CREATE INDEX idx_book_added_date ON books(added_date);
 
 
 CREATE TABLE subscriptions (
