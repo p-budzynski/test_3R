@@ -7,8 +7,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import pl.kurs.config.NotificationProperties;
-import pl.kurs.config.RabbitConfig;
 import pl.kurs.messaging.dto.EmailMessage;
 
 import static org.assertj.core.api.Assertions.assertThat;

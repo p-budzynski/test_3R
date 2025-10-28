@@ -9,7 +9,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
-import pl.kurs.config.NotificationProperties;
 import pl.kurs.messaging.producer.EmailProducer;
 
 import java.time.LocalDate;

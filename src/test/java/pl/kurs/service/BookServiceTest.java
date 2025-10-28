@@ -71,7 +71,7 @@ public class BookServiceTest {
         when(bookRepositoryMock.findById(bookId)).thenReturn(Optional.of(savedBook));
 
         //when
-        Optional<Book> result = bookService.findById(bookId);
+        Optional<Book> result = bookService.findBookById(bookId);
 
         //then
         assertThat(result).isPresent();

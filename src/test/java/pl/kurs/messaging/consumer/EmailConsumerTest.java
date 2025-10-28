@@ -1,6 +1,5 @@
 package pl.kurs.messaging.consumer;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -10,7 +9,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import pl.kurs.config.NotificationProperties;
 import pl.kurs.messaging.dto.EmailMessage;
 
 import static org.assertj.core.api.Assertions.assertThat;

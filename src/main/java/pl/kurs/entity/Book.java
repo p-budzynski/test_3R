@@ -2,14 +2,14 @@ package pl.kurs.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "books",indexes = {
-        @Index(name = "idx_book_author", columnList = "author"),
-        @Index(name = "idx_book_category", columnList = "book_category"),
-        @Index(name = "idx_book_added_date", columnList = "added_date")
+        @Index(name = "idx_book_author", columnList = "author_fk"),
+        @Index(name = "idx_book_category", columnList = "book_category")
 })
 @Data
 @Builder
@@ -21,9 +21,6 @@ public class Book {
     private Long id;
 
     @Column(nullable = false)
-    private String author;
-
-    @Column(nullable = false)
     private String title;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -33,14 +30,7 @@ public class Book {
     @Column(name = "page_count")
     private Integer pageCount;
 
-    @Column(name = "added_date", nullable = false)
-    private LocalDate addedDate;
-
-    @PrePersist
-    protected void onCreate() {
-        if (addedDate == null) {
-            addedDate = LocalDate.now();
-        }
-    }
-
+    @ManyToOne
+    @JoinColumn(name = "author_fk", nullable = false)
+    private Author author;
 }

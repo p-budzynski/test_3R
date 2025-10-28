@@ -1,10 +1,30 @@
 --liquibase formatted sql
 --changeset test_3R:1
 
+CREATE TABLE authors (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(255)
+);
+
+
 CREATE TABLE categories (
-                id BIGSERIAL PRIMARY KEY,
-                name VARCHAR(255) NOT NULL UNIQUE
-            );
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL UNIQUE
+);
+
+
+CREATE TABLE books (
+    id BIGSERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    book_category BIGINT NOT NULL,
+    page_count INT,
+    author_fk BIGINT NOT NULL,
+    CONSTRAINT fk_books_author FOREIGN KEY (author_fk) REFERENCES authors(id),
+    CONSTRAINT fk_books_category FOREIGN KEY (book_category) REFERENCES categories(id)
+);
+
+CREATE INDEX idx_book_author ON books(author_fk);
+CREATE INDEX idx_book_category ON books(book_category);
 
 
 CREATE TABLE clients (
@@ -17,33 +37,27 @@ CREATE TABLE clients (
     verification_token VARCHAR(255)
 );
 
-CREATE INDEX idx_client_email_verified ON clients(id, email_verified);
-
-
-CREATE TABLE books (
-    id BIGSERIAL PRIMARY KEY,
-    author VARCHAR(255) NOT NULL,
-    title VARCHAR(255) NOT NULL,
-    book_category BIGINT NOT NULL,
-    page_count INTEGER,
-    added_date DATE NOT NULL,
-    CONSTRAINT fk_books_category FOREIGN KEY (book_category) REFERENCES categories(id)
-);
-
-CREATE INDEX idx_book_author ON books(author);
-CREATE INDEX idx_book_category ON books(book_category);
-CREATE INDEX idx_book_added_date ON books(added_date);
-
 
 CREATE TABLE subscriptions (
     id BIGSERIAL PRIMARY KEY,
-    client_id BIGINT NOT NULL,
-    subscription_type VARCHAR(50) NOT NULL,
-    subscription_value VARCHAR(255) NOT NULL,
-    CONSTRAINT fk_subscriptions_client FOREIGN KEY (client_id) REFERENCES clients(id),
-    CONSTRAINT uk_client_subscription_value UNIQUE (client_id, subscription_type, subscription_value)
+    client_fk BIGINT NOT NULL,
+    author_fk BIGINT,
+    category_fk BIGINT,
+    CONSTRAINT fk_subscriptions_client FOREIGN KEY (client_fk) REFERENCES clients(id),
+    CONSTRAINT fk_subscriptions_author FOREIGN KEY (author_fk) REFERENCES authors(id),
+    CONSTRAINT fk_subscriptions_category FOREIGN KEY (category_fk) REFERENCES categories(id)
 );
 
-CREATE INDEX idx_subscription_type_value ON subscriptions(subscription_type, subscription_value);
-CREATE INDEX idx_subscription_client ON subscriptions(client_id);
-CREATE INDEX idx_subscription_client_type_value ON subscriptions(client_id, subscription_type, subscription_value);
+CREATE INDEX idx_subscription_client ON subscriptions(client_fk);
+CREATE INDEX idx_subscription_author ON subscriptions(author_fk);
+CREATE INDEX idx_subscription_category ON subscriptions(category_fk);
+
+
+CREATE TABLE subscription_notifications (
+    id BIGSERIAL PRIMARY KEY,
+    client_fk BIGINT NOT NULL,
+    book_fk BIGINT NOT NULL,
+    CONSTRAINT fk_subscription_notifications_client FOREIGN KEY (client_fk) REFERENCES clients(id),
+    CONSTRAINT fk_subscription_notifications_book FOREIGN KEY (book_fk) REFERENCES books(id)
+);
+

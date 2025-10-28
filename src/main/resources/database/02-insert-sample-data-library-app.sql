@@ -1,6 +1,15 @@
 --liquibase formatted sql
 --changeset test_3R:2
 
+
+INSERT INTO authors (name) VALUES
+('George Orwell'),
+('Haruki Murakami'),
+('Stephen Hawking'),
+('Yuval Noah Harari'),
+('Andrew S. Tanenbaum');
+
+
 INSERT INTO categories (name) VALUES
     ('Fiction'),
     ('Science Fiction'),
@@ -22,14 +31,14 @@ INSERT INTO clients (first_name, last_name, email, city, email_verified, verific
 ('Katarzyna', 'Mazur', 'katarzyna.mazur@example.com', 'Poznań', true, NULL);
 
 
-INSERT INTO books (author, title, book_category, page_count, added_date) VALUES
-('George Orwell', 'Rok 1984', 2, 328, CURRENT_DATE),
-('Haruki Murakami', 'Norwegian Wood', 1, 296, CURRENT_DATE),
-('Stephen Hawking', 'Krótka historia czasu', 8, 212, CURRENT_DATE),
-('Yuval Noah Harari', 'Sapiens: Od zwierząt do bogów', 6, 443, CURRENT_DATE),
-('Andrew S. Tanenbaum', 'Systemy operacyjne', 9, 1136, CURRENT_DATE);
+INSERT INTO books (title, book_category, page_count, author_fk) VALUES
+('Rok 1984', 2, 328, 1),
+('Norwegian Wood', 1, 296, 2),
+('Krótka historia czasu', 8, 212, 3),
+('Sapiens: Od zwierząt do bogów', 6, 443, 4),
+('Systemy operacyjne', 9, 1136, 5);
 
 
-INSERT INTO subscriptions (client_id, subscription_type, subscription_value) VALUES
-(3, 'AUTHOR', 'J.K. Rowling'),
-(5, 'CATEGORY', 'Fantasy');
+INSERT INTO subscriptions (client_fk, author_fk, category_fk) VALUES
+(3, 1, null),
+(5, null, 6);

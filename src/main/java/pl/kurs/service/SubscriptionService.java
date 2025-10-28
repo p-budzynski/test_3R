@@ -8,11 +8,11 @@ import org.springframework.transaction.annotation.Transactional;
 import pl.kurs.dto.SubscriptionDto;
 import pl.kurs.entity.Client;
 import pl.kurs.entity.Subscription;
-import pl.kurs.entity.SubscriptionType;
 import pl.kurs.mapper.SubscriptionMapper;
 import pl.kurs.repository.SubscriptionRepository;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -26,11 +26,8 @@ public class SubscriptionService {
     public SubscriptionDto createSubscription(SubscriptionDto dto) {
         Client client = clientService.getVerifiedClientById(dto.getClientId());
 
-        SubscriptionType subscriptionType = SubscriptionType.fromString(dto.getSubscriptionType());
-
         Subscription subscription = subscriptionMapper.dtoToEntity(dto);
         subscription.setClient(client);
-        subscription.setSubscriptionType(subscriptionType);
 
         Subscription savedSubscription = subscriptionRepository.save(subscription);
 
@@ -41,7 +38,8 @@ public class SubscriptionService {
         subscriptionRepository.deleteById(id);
     }
 
-    public Slice<Object[]> findEmailsAndBooksForDatePaginated(LocalDate date, PageRequest pageRequest) {
-        return subscriptionRepository.findEmailsAndBooksForDatePaginated(date, pageRequest);
+
+    public List<Subscription> findByAuthorIdOrCategoryId(Long authorId, Long categoryId) {
+        return subscriptionRepository.findByAuthorIdOrCategoryId(authorId, categoryId);
     }
 }

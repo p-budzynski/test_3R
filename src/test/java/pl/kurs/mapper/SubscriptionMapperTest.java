@@ -5,7 +5,6 @@ import org.mapstruct.factory.Mappers;
 import pl.kurs.dto.SubscriptionDto;
 import pl.kurs.entity.Client;
 import pl.kurs.entity.Subscription;
-import pl.kurs.entity.SubscriptionType;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

@@ -164,6 +164,16 @@
                             <version>0.2.0</version>
                         </path>
                     </annotationProcessorPaths>
+                    <compilerArgs>--enable-preview</compilerArgs>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <!--suppress UnresolvedMavenProperty -->
+                    <argLine>${argLine} --enable-preview</argLine>
                 </configuration>
             </plugin>
 
@@ -171,6 +181,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
+                    <mainClass>pl.kurs.Main</mainClass>
                     <excludes>
                         <exclude>
                             <groupId>org.projectlombok</groupId>
@@ -187,20 +198,23 @@
                 <configuration>
                     <outputDirectory>${project.build.directory}/jacoco</outputDirectory>
                     <excludes>
+                        <exclude>pl/kurs/app/*</exclude>
                         <exclude>pl/kurs/config/*</exclude>
+                        <exclude>pl/kurs/controller/*</exclude>
                         <exclude>pl/kurs/dto/*</exclude>
                         <exclude>pl/kurs/entity/*</exclude>
-                        <exclude>pl/kurs/event/*</exclude>
                         <exclude>pl/kurs/exception/*</exclude>
-                        <exclude>pl/kurs/messaging/dto/*</exclude>
                         <exclude>pl/kurs/postman_collections/*</exclude>
-                        <exclude>pl/kurs/validation/*</exclude>
-                        <exclude>pl/kurs/Application.class</exclude>
+                        <exclude>pl/kurs/service/BikeRentalService.class</exclude>
+                        <exclude>pl/kurs/service/EmailService.class</exclude>
+                        <exclude>pl/kurs/service/KafkaSender.class</exclude>
+                        <!--<exclude>pl/kurs/validation/*</exclude>-->
+                        <exclude>pl/kurs/Main.class</exclude>
                     </excludes>
                 </configuration>
 
                 <executions>
-                    <!-- Konfiguracja dla testów jednostkowych -->
+                    <!-- Configuration for unit testing -->
                     <execution>
                         <id>prepare-agent</id>
                         <goals>
@@ -215,7 +229,7 @@
                         </goals>
                     </execution>
 
-                    <!-- Konfiguracja dla testów integracyjnych -->
+                    <!-- Configuration for integration tests -->
                     <execution>
                         <id>prepare-agent-integration</id>
                         <goals>
@@ -234,7 +248,7 @@
                         </configuration>
                     </execution>
 
-                    <!-- Weryfikacja pokrycia kodu -->
+                    <!-- Code coverage verification -->
                     <execution>
                         <id>default-verify</id>
                         <phase>verify</phase>
@@ -278,7 +292,7 @@
                         </configuration>
                     </execution>
 
-                    <!-- Łączenie raportów z testów jednostkowych i integracyjnych -->
+                    <!-- Combining unit and integration test reports -->
                     <execution>
                         <id>merge-results</id>
                         <phase>verify</phase>

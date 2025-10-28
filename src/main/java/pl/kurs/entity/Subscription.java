@@ -8,10 +8,10 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "subscriptions",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"client_id", "subscription_type", "subscription_value"}),
         indexes = {
-                @Index(name = "idx_subscription_type_value", columnList = "subscription_type, subscription_value"),
-                @Index(name = "idx_subscription_client", columnList = "client_id")
+                @Index(name = "idx_subscription_client", columnList = "client_fk"),
+                @Index(name = "idx_subscription_author", columnList = "author_fk"),
+                @Index(name = "idx_subscription_category", columnList = "category_fk")
         })
 @Data
 @Builder
@@ -23,14 +23,23 @@ public class Subscription {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "client_id", nullable = false)
+    @JoinColumn(name = "client_fk", nullable = false)
     private Client client;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "subscription_type", nullable = false)
-    private SubscriptionType subscriptionType;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "author_fk")
+    private Author author;
 
-    @Column(name = "subscription_value", nullable = false)
-    private String subscriptionValue;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_fk")
+    private Category category;
+
+    @PrePersist
+    @PreUpdate
+    private void validate() {
+        if ((author == null && category == null) || (author != null && category != null)) {
+            throw new IllegalStateException("Subscription must have either author OR category, but not both.");
+        }
+    }
 
 }
