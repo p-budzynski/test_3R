@@ -15,10 +15,6 @@ public class BookCreatedEventListener {
     @EventListener
     public void handleBookCreated(BookCreatedEvent event) {
         notificationService.createNotificationsForSubscriptions(event.getBookId());
+    }
 
-
-
-
-
-        }
 }

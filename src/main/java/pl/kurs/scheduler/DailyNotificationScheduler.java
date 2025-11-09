@@ -6,8 +6,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import pl.kurs.service.SubscriptionNotificationService;
 
-import java.time.LocalDate;
-
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -17,7 +15,7 @@ public class DailyNotificationScheduler {
     @Scheduled(cron = "${app.scheduling.daily-notifications}")
     public void runDailyNotificationJob() {
         try {
-            notificationService.processAllNotifications();
+            notificationService.processAllNotificationsStream();
             log.info("Daily notification job completed successfully");
         } catch (Exception ex) {
             log.error("Daily notification job failed", ex);

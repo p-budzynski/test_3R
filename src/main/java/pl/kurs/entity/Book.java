@@ -9,7 +9,7 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "books",indexes = {
         @Index(name = "idx_book_author", columnList = "author_fk"),
-        @Index(name = "idx_book_category", columnList = "book_category")
+        @Index(name = "idx_book_category", columnList = "category_fk")
 })
 @Data
 @Builder
@@ -24,13 +24,13 @@ public class Book {
     private String title;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "book_category", nullable = false)
+    @JoinColumn(name = "category_fk", nullable = false)
     private Category category;
 
     @Column(name = "page_count")
     private Integer pageCount;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_fk", nullable = false)
     private Author author;
 }

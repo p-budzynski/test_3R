@@ -33,6 +33,7 @@ public class ClientService {
         return clientMapper.entityToDto(savedClient);
     }
 
+    @Transactional
     public boolean verifyEmail(String token) {
         return clientRepository.findByVerificationToken(token)
                 .map(client -> {

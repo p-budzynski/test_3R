@@ -205,7 +205,6 @@
                         <exclude>pl/kurs/entity/*</exclude>
                         <exclude>pl/kurs/exception/*</exclude>
                         <exclude>pl/kurs/postman_collections/*</exclude>
-                        <exclude>pl/kurs/service/BikeRentalService.class</exclude>
                         <exclude>pl/kurs/service/EmailService.class</exclude>
                         <exclude>pl/kurs/service/KafkaSender.class</exclude>
                         <!--<exclude>pl/kurs/validation/*</exclude>-->
