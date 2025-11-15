@@ -45,4 +45,4 @@ notification:
 
 app:
     scheduling:
-        daily-notifications: "0 20 22 * * *"
+        daily-notifications: "0 0 0 * * *"

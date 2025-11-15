@@ -1,16 +1,21 @@
 package pl.kurs.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import pl.kurs.entity.Book;
-import pl.kurs.entity.Client;
 import pl.kurs.entity.Subscription;
 import pl.kurs.entity.SubscriptionNotification;
 import pl.kurs.repository.SubscriptionNotificationRepository;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class SubscriptionNotificationService {
@@ -19,6 +24,7 @@ public class SubscriptionNotificationService {
     private final BookService bookService;
     private final MailService mailService;
 
+    @Transactional
     public void createNotificationsForSubscriptions(Long bookId) {
         Book book = bookService.findBookById(bookId);
 
@@ -33,21 +39,50 @@ public class SubscriptionNotificationService {
                 .map(subscription -> SubscriptionNotification.builder()
                         .client(subscription.getClient())
                         .book(book)
+                        .processed(false)
                         .build())
                 .toList();
 
         notificationRepository.saveAll(notifications);
     }
 
-    @Transactional
-    public void processAllNotifications() {
-        List<Client> clients = notificationRepository.findClientsWithNotifications();
+    public void processAllNotificationsStream() {
+       List<Long> ids = new ArrayList<>();
+       int batchSize = 1000;
 
-        for (Client client : clients) {
-            List<Book> books = notificationRepository.findBooksByClientId(client.getId());
-            mailService.sendNewBookNotifications(client, books);
-        }
+       try (Stream<SubscriptionNotification> stream =
+               notificationRepository.streamUnprocessed()) {
 
-        notificationRepository.deleteAll();
+           stream.forEach(sn -> {
+               try {
+                   mailService.sendNewBookNotifications(
+                           sn.getClient(),
+                           Collections.singletonList(sn.getBook())
+                   );
+                   ids.add(sn.getId());
+
+                   if (ids.size() >= batchSize) {
+                       processBatch(ids);
+                       ids.clear();
+                   }
+
+               } catch (Exception ex) {
+                   log.error("Failed to send notification {}", sn.getId(), ex);
+               }
+           });
+       }
+
+       if (!ids.isEmpty()) {
+           processBatch(ids);
+       }
+
+       notificationRepository.deleteByProcessed();
     }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void processBatch(List<Long> ids) {
+        notificationRepository.markProcessed(ids);
+        log.info("Batch marked as processed: {}", ids.size());
+    }
+
 }

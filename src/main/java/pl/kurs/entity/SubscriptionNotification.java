@@ -25,4 +25,6 @@ public class SubscriptionNotification {
     @JoinColumn(name = "book_fk", nullable = false)
     private Book book;
 
+    private Boolean processed = false;
+
 }

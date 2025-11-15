@@ -20,10 +20,10 @@ public class SubscriptionDto {
     @Min(value = 1, message = "Client ID must be at least 1")
     private Long clientId;
 
-    @NotNull(message = "Subscription type is required")
-    private String subscriptionType;
+    @Min(value = 1, message = "Author ID must be at least 1")
+    private Long authorId;
 
-    @NotBlank(message = "Subscription value is required")
-    private String subscriptionValue;
+    @Min(value = 1, message = "Category ID must be at least 1")
+    private Long categoryId;
 
 }
