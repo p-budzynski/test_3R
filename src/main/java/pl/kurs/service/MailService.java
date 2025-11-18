@@ -59,7 +59,8 @@ public class MailService {
                     "bookList", bookList
             );
 
-            String body = getMessageBody(template.getBody(), variables);
+            String body = getMessageBody(template.getBody(), variables)
+                    .replace("\\n", "\n");
 
             SimpleMailMessage message = new SimpleMailMessage();
             message.setFrom(notificationProperties.getEmail());

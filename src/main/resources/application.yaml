@@ -46,3 +46,4 @@ notification:
 app:
     scheduling:
         daily-notifications: "0 0 0 * * *"
+        daily-delete-notifications: "0 0 1 * * *"

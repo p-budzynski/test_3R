@@ -4,6 +4,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import pl.kurs.validation.Create;
 import pl.kurs.validation.Delete;
 import pl.kurs.validation.Update;
 
@@ -16,14 +17,14 @@ public class SubscriptionDto {
     @Min(value = 1, message = "ID must be at least 1", groups = {Update.class, Delete.class})
     private Long id;
 
-    @NotNull(message = "Client ID is required")
-    @Min(value = 1, message = "Client ID must be at least 1")
+    @NotNull(message = "Client ID is required", groups = Create.class)
+    @Min(value = 1, message = "Client ID must be at least 1", groups = Create.class)
     private Long clientId;
 
-    @Min(value = 1, message = "Author ID must be at least 1")
+    @Min(value = 1, message = "Author ID must be at least 1", groups = Create.class)
     private Long authorId;
 
-    @Min(value = 1, message = "Category ID must be at least 1")
+    @Min(value = 1, message = "Category ID must be at least 1", groups = Create.class)
     private Long categoryId;
 
 }

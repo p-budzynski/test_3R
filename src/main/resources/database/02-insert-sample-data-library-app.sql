@@ -47,4 +47,4 @@ INSERT INTO message_config (code, subject, body) VALUES
 ('ACCOUNT_ACTIVATION', 'Confirm your e-mail address!',
 'Click the link to confirm your e-mail: {{verificationUrl}}{{token}}'),
 ('NEW_BOOKS', 'New books in the library!',
-'Hello {{firstName}},\n\nWe’ve added new books that might interest you:\n\n {{bookList}}\n\nVisit our library to explore them!\n\nBest regards,\nYour Library Team!');
+'Hello {{firstName}},\n\nWe’ve added new books that might interest you:\n\n{{bookList}}\n\nVisit our library to explore them!\n\nBest regards,\nYour Library Team!');

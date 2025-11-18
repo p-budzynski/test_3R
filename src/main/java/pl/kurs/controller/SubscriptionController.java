@@ -8,6 +8,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pl.kurs.dto.SubscriptionDto;
 import pl.kurs.service.SubscriptionService;
+import pl.kurs.validation.Create;
 
 @RestController
 @RequestMapping("/subscriptions")
@@ -18,7 +19,7 @@ public class SubscriptionController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public SubscriptionDto createSubscription(@Validated @RequestBody SubscriptionDto subscriptionDto) {
+    public SubscriptionDto createSubscription(@Validated(Create.class) @RequestBody SubscriptionDto subscriptionDto) {
             return subscriptionService.createSubscription(subscriptionDto);
     }
 

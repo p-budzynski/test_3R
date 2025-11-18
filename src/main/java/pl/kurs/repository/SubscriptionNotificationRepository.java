@@ -1,6 +1,7 @@
 package pl.kurs.repository;
 
 import jakarta.persistence.QueryHint;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -23,8 +24,10 @@ public interface SubscriptionNotificationRepository extends JpaRepository<Subscr
     @Query("UPDATE SubscriptionNotification sn SET sn.processed = true WHERE sn.id IN :ids")
     void markProcessed(@Param("ids") List<Long> ids);
 
-    @Modifying
-    @Query("DELETE FROM SubscriptionNotification sn WHERE sn.processed = true")
-    void deleteByProcessed();
+    @Query("SELECT sn.id FROM SubscriptionNotification sn WHERE sn.processed = true")
+    List<Long> findProcessedIds(Pageable pageable);
 
+    @Modifying
+    @Query("DELETE FROM SubscriptionNotification sn WHERE sn.id IN :ids")
+    void deleteAllByIdInBatch(@Param("ids") List<Long> ids);
 }
