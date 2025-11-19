@@ -64,8 +64,8 @@ CREATE TABLE subscription_notifications (
 
 CREATE TABLE message_config (
     id BIGSERIAL PRIMARY KEY,
-    code VARCHAR(50) NOT NULL UNIQUE,
+    code VARCHAR(255) NOT NULL UNIQUE,
     subject VARCHAR(255) NOT NULL,
-    body TEXT NOT NULL
+    body VARCHAR(255) NOT NULL
 );
 
