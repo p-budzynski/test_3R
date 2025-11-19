@@ -22,13 +22,4 @@ public class DailyNotificationScheduler {
         }
     }
 
-    @Scheduled(cron = "${app.scheduling.daily-delete-notifications}")
-    public void runDailyDeleteNotificationJob() {
-        try {
-            notificationService.deleteAllNotificationProcessed();
-            log.info("Daily delete notification processed job completed successfully");
-        } catch (Exception ex) {
-            log.error("Daily delete notification job failed", ex);
-        }
-    }
 }

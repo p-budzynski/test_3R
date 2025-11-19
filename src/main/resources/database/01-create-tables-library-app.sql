@@ -57,7 +57,6 @@ CREATE TABLE subscription_notifications (
     id BIGSERIAL PRIMARY KEY,
     client_fk BIGINT NOT NULL,
     book_fk BIGINT NOT NULL,
-    processed BOOLEAN NOT NULL DEFAULT FALSE,
     CONSTRAINT fk_subscription_notifications_client FOREIGN KEY (client_fk) REFERENCES clients(id),
     CONSTRAINT fk_subscription_notifications_book FOREIGN KEY (book_fk) REFERENCES books(id)
 );

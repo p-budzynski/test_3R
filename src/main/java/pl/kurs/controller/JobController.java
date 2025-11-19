@@ -18,9 +18,4 @@ public class JobController {
         notificationScheduler.runDailyNotificationJob();
     }
 
-    @DeleteMapping("/delete")
-    public void delete() {
-        notificationScheduler.runDailyDeleteNotificationJob();
-    }
-
 }
