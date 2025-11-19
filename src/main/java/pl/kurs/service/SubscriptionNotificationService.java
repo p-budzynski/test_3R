@@ -40,7 +40,6 @@ public class SubscriptionNotificationService {
                 .map(subscription -> SubscriptionNotification.builder()
                         .client(subscription.getClient())
                         .book(book)
-                        .processed(false)
                         .build())
                 .toList();
 
