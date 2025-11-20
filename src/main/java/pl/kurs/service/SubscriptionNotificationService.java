@@ -10,10 +10,7 @@ import pl.kurs.entity.Subscription;
 import pl.kurs.entity.SubscriptionNotification;
 import pl.kurs.repository.SubscriptionNotificationRepository;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -48,38 +45,52 @@ public class SubscriptionNotificationService {
 
     @Transactional
     public void processAllNotificationsStream() {
-        Map<Long, List<SubscriptionNotification>> grouped = new HashMap<>();
+        Long currentClientId = null;
+        Client currentClient = null;
+        List<SubscriptionNotification> bucket = new ArrayList<>();
 
         try (Stream<SubscriptionNotification> stream = notificationRepository.streamSubscriptionNotification()) {
-            stream.forEach(sn -> {
+            Iterator<SubscriptionNotification> it = stream.iterator();
+
+            while (it.hasNext()) {
+                SubscriptionNotification sn = it.next();
                 Long clientId = sn.getClient().getId();
-                grouped
-                        .computeIfAbsent(clientId, c -> new ArrayList<>())
-                        .add(sn);
-            });
+
+                if (currentClientId != null && !currentClientId.equals(clientId)) {
+                    processBucket(currentClient, bucket);
+                    bucket.clear();
+                }
+
+                currentClientId = clientId;
+                currentClient = sn.getClient();
+                bucket.add(sn);
+            }
         }
 
-        grouped.forEach((clientId, subscriptionNotifications) -> {
-            Client client = subscriptionNotifications.get(0).getClient();
-            try {
-                List<Book> books = subscriptionNotifications.stream()
-                        .map(SubscriptionNotification::getBook)
-                        .distinct()
-                        .toList();
+        if (!bucket.isEmpty()) {
+            processBucket(currentClient, bucket);
+        }
+    }
 
-                mailService.sendNewBookNotifications(client, books);
+    @Transactional
+    private void processBucket(Client client, List<SubscriptionNotification> bucket) {
+        try {
+            List<Book> books = bucket.stream()
+                    .map(SubscriptionNotification::getBook)
+                    .distinct()
+                    .toList();
 
-                List<Long> ids = subscriptionNotifications.stream()
-                        .map(SubscriptionNotification::getId)
-                        .toList();
+            mailService.sendNewBookNotifications(client, books);
 
-                notificationRepository.deleteAllByIdInBatch(ids);
-                log.info("Deleted {} processed notifications", ids.size());
+            List<Long> ids = bucket.stream()
+                    .map(SubscriptionNotification::getId)
+                    .toList();
 
-            } catch (Exception ex) {
-                log.error("Failed to send notification {}", client.getEmail(), ex);
-            }
-        });
+            notificationRepository.deleteAllByIdInBatch(ids);
+            log.info("Processed and deleted {} notifications for client {}", ids.size(), client.getId());
+        } catch (Exception ex) {
+            log.error("Failed to send notification to {}", client.getEmail(), ex);
+        }
     }
 
 }
