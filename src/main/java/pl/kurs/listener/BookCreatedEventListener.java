@@ -4,13 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import pl.kurs.event.BookCreatedEvent;
-import pl.kurs.service.SubscriptionNotificationService;
+import pl.kurs.service.SubscriptionNotificationReaderService;
 
 @Component
 @RequiredArgsConstructor
 public class BookCreatedEventListener {
 
-    private final SubscriptionNotificationService notificationService;
+    private final SubscriptionNotificationReaderService notificationService;
 
     @EventListener
     public void handleBookCreated(BookCreatedEvent event) {

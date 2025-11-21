@@ -16,11 +16,11 @@ import java.util.stream.Stream;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class SubscriptionNotificationService {
+public class SubscriptionNotificationReaderService {
     private final SubscriptionNotificationRepository notificationRepository;
+    private final SubscriptionNotificationProcessingService processingService;
     private final SubscriptionService subscriptionService;
     private final BookService bookService;
-    private final MailService mailService;
 
     @Transactional
     public void createNotificationsForSubscriptions(Long bookId) {
@@ -57,7 +57,7 @@ public class SubscriptionNotificationService {
                 Long clientId = sn.getClient().getId();
 
                 if (currentClientId != null && !currentClientId.equals(clientId)) {
-                    processBucket(currentClient, bucket);
+                    processingService.processBucket(currentClient, bucket);
                     bucket.clear();
                 }
 
@@ -68,28 +68,7 @@ public class SubscriptionNotificationService {
         }
 
         if (!bucket.isEmpty()) {
-            processBucket(currentClient, bucket);
-        }
-    }
-
-    @Transactional
-    private void processBucket(Client client, List<SubscriptionNotification> bucket) {
-        try {
-            List<Book> books = bucket.stream()
-                    .map(SubscriptionNotification::getBook)
-                    .distinct()
-                    .toList();
-
-            mailService.sendNewBookNotifications(client, books);
-
-            List<Long> ids = bucket.stream()
-                    .map(SubscriptionNotification::getId)
-                    .toList();
-
-            notificationRepository.deleteAllByIdInBatch(ids);
-            log.info("Processed and deleted {} notifications for client {}", ids.size(), client.getId());
-        } catch (Exception ex) {
-            log.error("Failed to send notification to {}", client.getEmail(), ex);
+            processingService.processBucket(currentClient, bucket);
         }
     }
 

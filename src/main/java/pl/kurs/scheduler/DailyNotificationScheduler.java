@@ -4,13 +4,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import pl.kurs.service.SubscriptionNotificationService;
+import pl.kurs.service.SubscriptionNotificationReaderService;
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
 public class DailyNotificationScheduler {
-    private final SubscriptionNotificationService notificationService;
+    private final SubscriptionNotificationReaderService notificationService;
 
     @Scheduled(cron = "${app.scheduling.daily-notifications}")
     public void runDailyNotificationJob() {
