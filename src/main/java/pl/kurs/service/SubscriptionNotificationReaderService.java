@@ -57,7 +57,7 @@ public class SubscriptionNotificationReaderService {
                 Long clientId = sn.getClient().getId();
 
                 if (currentClientId != null && !currentClientId.equals(clientId)) {
-                    processingService.processBucket(currentClient, bucket);
+                    processingService.processBucket(currentClient, new ArrayList<>(bucket));
                     bucket.clear();
                 }
 
@@ -68,7 +68,7 @@ public class SubscriptionNotificationReaderService {
         }
 
         if (!bucket.isEmpty()) {
-            processingService.processBucket(currentClient, bucket);
+            processingService.processBucket(currentClient, new ArrayList<>(bucket));
         }
     }
 

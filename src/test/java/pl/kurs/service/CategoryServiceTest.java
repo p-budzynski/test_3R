@@ -25,30 +25,30 @@ public class CategoryServiceTest {
     private CategoryService categoryService;
 
     @Test
-    void shouldReturnCategory() {
+    void shouldReturnCategoryById() {
         //given
-        Category categoryTest = new Category(1L, "Fantasy");
-        when(categoryRepositoryMock.findById(categoryTest.getId())).thenReturn(Optional.of(categoryTest));
+        Long categoryId = 1L;
+        Category categoryTest = new Category(categoryId, "Category test");
+        when(categoryRepositoryMock.findById(categoryId)).thenReturn(Optional.of(categoryTest));
 
         //when
-        Category result = categoryService.findById(categoryTest.getId());
+        Category result = categoryService.findById(categoryId);
 
         //then
-        assertThat(result).isNotNull();
-        assertThat(result.getId()).isEqualTo(categoryTest.getId());
-        assertThat(result.getName()).isEqualTo(categoryTest.getName());
+        assertThat(result).isEqualTo(categoryTest);
     }
 
     @Test
-    void shouldThrowResourceNotFoundExceptionWhenCategoryNotExists() {
+    void shouldThrowExceptionWhenCategoryNotFound() {
         //given
-        Long nonExistentCategoryId = 999L;
-        when(categoryRepositoryMock.findById(nonExistentCategoryId)).thenReturn(Optional.empty());
+        Long categoryId = 1L;
+        when(categoryRepositoryMock.findById(categoryId))
+                .thenReturn(Optional.empty());
 
         //when then
-        assertThatThrownBy(() -> categoryService.findById(nonExistentCategoryId))
+        assertThatThrownBy(() -> categoryService.findById(categoryId))
                 .isInstanceOf(ResourceNotFoundException.class)
-                .hasMessage("Category ID: 999 not found");
+                .hasMessage(STR."Category ID: \{categoryId} not found");
     }
 
 }

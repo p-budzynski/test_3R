@@ -38,7 +38,6 @@ public class SubscriptionService {
         subscriptionRepository.deleteById(id);
     }
 
-
     public List<Subscription> findByAuthorIdOrCategoryId(Long authorId, Long categoryId) {
         return subscriptionRepository.findByAuthorIdOrCategoryId(authorId, categoryId);
     }

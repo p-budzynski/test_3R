@@ -18,7 +18,7 @@ public class DailyNotificationScheduler {
             notificationService.processAllNotificationsStream();
             log.info("Daily notification job completed successfully");
         } catch (Exception ex) {
-            log.error("Daily notification job failed", ex);
+            log.error("", ex);
         }
     }
 
