@@ -1,6 +1,7 @@
 package pl.kurs.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -8,11 +9,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
 import pl.kurs.dto.SubscriptionDto;
 import pl.kurs.entity.Category;
 import pl.kurs.entity.Client;
 import pl.kurs.entity.Subscription;
+import pl.kurs.repository.BookRepository;
 import pl.kurs.repository.CategoryRepository;
 import pl.kurs.repository.ClientRepository;
 import pl.kurs.repository.SubscriptionRepository;
@@ -26,7 +27,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
-@Transactional
 public class SubscriptionControllerTest {
 
     @Autowired
@@ -46,6 +46,17 @@ public class SubscriptionControllerTest {
 
     @Autowired
     private SubscriptionRepository subscriptionRepository;
+
+    @Autowired
+    private BookRepository bookRepository;
+
+    @BeforeEach
+    void clean() {
+        subscriptionRepository.deleteAll();
+        bookRepository.deleteAll();
+        categoryRepository.deleteAll();
+        clientRepository.deleteAll();
+    }
 
     @Test
     void shouldCreateSubscription() throws Exception {

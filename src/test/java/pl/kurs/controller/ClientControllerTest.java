@@ -1,6 +1,7 @@
 package pl.kurs.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -8,8 +9,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
-import org.testcontainers.junit.jupiter.Testcontainers;
 import pl.kurs.dto.ClientDto;
 import pl.kurs.entity.Client;
 import pl.kurs.repository.ClientRepository;
@@ -22,7 +21,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
-@Transactional
 public class ClientControllerTest {
 
     @Autowired
@@ -33,6 +31,11 @@ public class ClientControllerTest {
 
     @Autowired
     private ClientRepository clientRepository;
+
+    @BeforeEach
+    void before() {
+        clientRepository.deleteAll();
+    }
 
     @Test
     void shouldCreateClient() throws Exception {

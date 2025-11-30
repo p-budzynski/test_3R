@@ -9,8 +9,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
-import org.testcontainers.junit.jupiter.Testcontainers;
 import pl.kurs.dto.BookDto;
 import pl.kurs.entity.Author;
 import pl.kurs.entity.Category;
@@ -25,7 +23,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
-@Transactional
 public class BookControllerTest {
 
     @Autowired
@@ -48,6 +45,10 @@ public class BookControllerTest {
 
     @BeforeEach
     void before() {
+        authorRepository.deleteAll();
+        categoryRepository.deleteAll();
+        bookRepository.deleteAll();
+
         Author savedAuthor = authorRepository.save(new Author(null, "Test Author", null));
         authorId = savedAuthor.getId();
 

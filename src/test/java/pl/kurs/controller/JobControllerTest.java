@@ -1,12 +1,12 @@
 package pl.kurs.controller;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
 import pl.kurs.entity.*;
 import pl.kurs.repository.*;
 
@@ -39,16 +39,25 @@ public class JobControllerTest {
     @Autowired
     private SubscriptionNotificationRepository notificationRepository;
 
-    @Transactional
+    @BeforeEach
+    void before() {
+        notificationRepository.deleteAll();
+        bookRepository.deleteAll();
+        authorRepository.deleteAll();
+        categoryRepository.deleteAll();
+        clientRepository.deleteAll();
+        messageConfigRepository.deleteAll();
+    }
+
     @Test
     void shouldRunDailyNotificationJob() throws Exception {
         //given
-        messageConfigRepository.save(new MessageConfig(null, "NEW_BOOKS", "TEST", "{{firstName}}\n{{bookList}}"));
         Client client1 = clientRepository.save(new Client(null, "Client1", "Client1", "c1@mail.com", "City1", true, null, null));
         Client client2 = clientRepository.save(new Client(null, "Client2", "Client2", "c2@mail.com", "City2", true, null, null));
         Author author = authorRepository.save(new Author(null, "Test Author", null));
         Category category = categoryRepository.save(new Category(null, "Test Category"));
         Book book = bookRepository.save(new Book(null, "Title Test", category, 100, author));
+        messageConfigRepository.save(new MessageConfig(null, "NEW_BOOKS", "TEST", "{{firstName}}\n{{bookList}}"));
 
         notificationRepository.save(new SubscriptionNotification(null, client1, book));
         notificationRepository.save(new SubscriptionNotification(null, client2, book));
