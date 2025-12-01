@@ -2,6 +2,7 @@ package pl.kurs.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +20,7 @@ public class SubscriptionNotificationProcessingService {
     private final SubscriptionNotificationRepository notificationRepository;
     private final MailService mailService;
 
+    @Async("notificationsExecutor")
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void processBucket(Client client, List<SubscriptionNotification> bucket) {
         try {
