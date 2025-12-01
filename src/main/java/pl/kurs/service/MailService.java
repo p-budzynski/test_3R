@@ -31,13 +31,7 @@ public class MailService {
                     "token", token
             );
 
-            String body = getMessageBody(template.getBody(), variables);
-
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom(notificationProperties.getEmail());
-            message.setTo(email);
-            message.setSubject(template.getSubject());
-            message.setText(body);
+            SimpleMailMessage message = createEmailMessage(email, template, variables);
 
             mailSender.send(message);
             log.info("Verification e-mail sent to: {}", email);
@@ -52,21 +46,14 @@ public class MailService {
 
             String bookList = books.stream()
                     .map(book -> STR."• \{book.getTitle()} — \{book.getAuthor().getName()} (\{book.getCategory().getName()})")
-            .collect(Collectors.joining("\n"));
+                    .collect(Collectors.joining("\n"));
 
             Map<String, String> variables = Map.of(
                     "firstName", client.getFirstName(),
                     "bookList", bookList
             );
 
-            String body = getMessageBody(template.getBody(), variables)
-                    .replace("\\n", "\n");
-
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom(notificationProperties.getEmail());
-            message.setTo(client.getEmail());
-            message.setSubject(template.getSubject());
-            message.setText(body);
+            SimpleMailMessage message = createEmailMessage(client.getEmail(), template, variables);
 
             mailSender.send(message);
             log.info("Email with new books sent to {}", client.getEmail());
@@ -75,10 +62,23 @@ public class MailService {
         }
     }
 
-    private String getMessageBody(String body, Map<String, String> variables) {
+    private SimpleMailMessage createEmailMessage(String email, MessageConfig template, Map<String, String> variables) {
+        String body = resolveTemplateVariables(template.getBody(), variables);
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(notificationProperties.getEmail());
+        message.setTo(email);
+        message.setSubject(template.getSubject());
+        message.setText(body);
+
+        return message;
+    }
+
+    private String resolveTemplateVariables(String body, Map<String, String> variables) {
         for (Map.Entry<String, String> entry : variables.entrySet()) {
             String placeholder = STR."{{\{entry.getKey()}}}";
-            body = body.replace(placeholder, entry.getValue());
+            body = body.replace(placeholder, entry.getValue())
+                    .replace("\\n", "\n");
         }
         return body;
     }
