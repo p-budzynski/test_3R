@@ -69,7 +69,7 @@ public class SubscriptionNotificationReaderServiceTest {
     }
 
     @Test
-    void processAllNotificationsStream() {
+    void shouldNotCreateNotificationWhenNoSubscription() {
         //given
         Long bookId = 1L;
         Book book = new Book();
