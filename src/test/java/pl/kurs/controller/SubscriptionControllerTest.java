@@ -13,10 +13,7 @@ import pl.kurs.dto.SubscriptionDto;
 import pl.kurs.entity.Category;
 import pl.kurs.entity.Client;
 import pl.kurs.entity.Subscription;
-import pl.kurs.repository.BookRepository;
-import pl.kurs.repository.CategoryRepository;
-import pl.kurs.repository.ClientRepository;
-import pl.kurs.repository.SubscriptionRepository;
+import pl.kurs.repository.*;
 import pl.kurs.service.SubscriptionService;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -48,10 +45,14 @@ public class SubscriptionControllerTest {
     private SubscriptionRepository subscriptionRepository;
 
     @Autowired
+    private SubscriptionNotificationRepository notificationRepository;
+
+    @Autowired
     private BookRepository bookRepository;
 
     @BeforeEach
     void clean() {
+        notificationRepository.deleteAll();
         subscriptionRepository.deleteAll();
         bookRepository.deleteAll();
         categoryRepository.deleteAll();

@@ -2,14 +2,22 @@ package pl.kurs.controller;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import pl.kurs.entity.*;
 import pl.kurs.repository.*;
 
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -39,6 +47,9 @@ public class JobControllerTest {
     @Autowired
     private SubscriptionNotificationRepository notificationRepository;
 
+    @MockitoBean
+    private JavaMailSender mailSenderMock;
+
     @BeforeEach
     void before() {
         notificationRepository.deleteAll();
@@ -62,9 +73,27 @@ public class JobControllerTest {
         notificationRepository.save(new SubscriptionNotification(null, client1, book));
         notificationRepository.save(new SubscriptionNotification(null, client2, book));
 
-        //when them
+        //when
         mockMvc.perform(post("/job/run"))
                 .andExpect(status().isOk());
+
+        //then
+        ArgumentCaptor<SimpleMailMessage> mailCaptor = ArgumentCaptor.forClass(SimpleMailMessage.class);
+
+        verify(mailSenderMock, timeout(3000).times(2))
+                .send(mailCaptor.capture());
+
+        List<SimpleMailMessage> mails = mailCaptor.getAllValues();
+
+        assertThat(mails)
+                .extracting(SimpleMailMessage::getTo)
+                .containsExactlyInAnyOrder(
+                        new String[]{client1.getEmail()},
+                        new String[]{client2.getEmail()}
+                );
+
+        assertThat(mails.get(0).getText()).contains("Client1");
+        assertThat(mails.get(1).getText()).contains("Client2");
     }
 
 }

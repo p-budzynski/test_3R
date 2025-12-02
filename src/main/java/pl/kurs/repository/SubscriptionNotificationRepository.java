@@ -14,7 +14,9 @@ public interface SubscriptionNotificationRepository extends JpaRepository<Subscr
             SELECT sn
             FROM SubscriptionNotification sn
             JOIN FETCH sn.client
-            JOIN FETCH sn.book
+            JOIN FETCH sn.book b
+            JOIN FETCH b.category
+            JOIN FETCH b.author
             ORDER BY sn.client.id
             """)
     @QueryHints({
