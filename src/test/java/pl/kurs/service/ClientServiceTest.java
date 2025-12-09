@@ -100,7 +100,7 @@ public class ClientServiceTest {
         //when then
         assertThatThrownBy(() -> clientService.getClientById(clientId))
                 .isInstanceOf(ResourceNotFoundException.class)
-                .hasMessage(STR."Client not found with id: \{clientId}");
+                .hasMessage("Client not found with id: " + clientId);
     }
 
     @Test

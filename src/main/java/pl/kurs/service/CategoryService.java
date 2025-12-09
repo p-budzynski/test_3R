@@ -16,7 +16,7 @@ public class CategoryService {
     @Transactional
     public Category findById(Long id) {
         return categoryRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(STR."Category ID: \{id} not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Category ID: " + id + " not found"));
     }
 
 }

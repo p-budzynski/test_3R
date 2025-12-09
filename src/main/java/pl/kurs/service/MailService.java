@@ -76,7 +76,7 @@ public class MailService {
 
     private String resolveTemplateVariables(String body, Map<String, String> variables) {
         for (Map.Entry<String, String> entry : variables.entrySet()) {
-            String placeholder = STR."{{\{entry.getKey()}}}";
+            String placeholder = "{{" + entry.getKey() + "}}";
             body = body.replace(placeholder, entry.getValue())
                     .replace("\\n", "\n");
         }

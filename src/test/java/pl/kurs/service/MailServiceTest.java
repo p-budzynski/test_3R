@@ -42,7 +42,7 @@ public class MailServiceTest {
         String token = "test_token_123";
         String subject = "Account activation";
         String bodyTemplate = "Hello, click on the verification link: {{verificationUrl}}?token={{token}}";
-        String expectedBody = STR."Hello, click on the verification link: \{VERIFICATION_URL}?token=\{token}";
+        String expectedBody = "Hello, click on the verification link: " + VERIFICATION_URL + "?token=" + token;
 
         MessageConfig mockTemplate = new MessageConfig();
         mockTemplate.setSubject(subject);
@@ -106,9 +106,9 @@ public class MailServiceTest {
         String bodyTemplate = "Hello {{firstName}},\n\nWe’ve added new books that might interest you:\n\n{{bookList}}\n\nVisit our library to explore them!\n\nBest regards,\nYour Library Team!";
 
         String expectedBookList = books.stream()
-                .map(book -> STR."• \{book.getTitle()} — \{book.getAuthor().getName()} (\{book.getCategory().getName()})")
+                .map(book -> "• " + book.getTitle() + " — " + book.getAuthor().getName() + " (" + book.getCategory().getName() + ")")
                 .collect(Collectors.joining("\n"));
-        String expectedBody = STR."Hello \{client.getFirstName()},\n\nWe’ve added new books that might interest you:\n\n\{expectedBookList}\n\nVisit our library to explore them!\n\nBest regards,\nYour Library Team!";
+        String expectedBody = "Hello " + client.getFirstName() + ",\n\nWe’ve added new books that might interest you:\n\n" + expectedBookList + "\n\nVisit our library to explore them!\n\nBest regards,\nYour Library Team!";
 
         MessageConfig mockTemplate = new MessageConfig();
         mockTemplate.setSubject(subject);

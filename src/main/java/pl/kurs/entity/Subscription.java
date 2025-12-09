@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import pl.kurs.exception.InvalidSubscriptionException;
 
 @Entity
 @Table(name = "subscriptions",
@@ -38,7 +39,7 @@ public class Subscription {
     @PreUpdate
     private void validate() {
         if ((author == null && category == null) || (author != null && category != null)) {
-            throw new IllegalStateException("Subscription must have either author OR category, but not both.");
+            throw new InvalidSubscriptionException("Subscription must have either author OR category, but not both.");
         }
     }
 

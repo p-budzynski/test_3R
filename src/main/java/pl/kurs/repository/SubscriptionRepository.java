@@ -21,4 +21,7 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Long
     List<Subscription> findByAuthorIdOrCategoryId(
             @Param("authorId") Long authorId, @Param("categoryId") Long categoryId);
 
+    boolean existsByClientIdAndCategoryId(Long clientId, Long categoryId);
+
+    boolean existsByClientIdAndAuthorId(Long clientId, Long AuthorId);
 }

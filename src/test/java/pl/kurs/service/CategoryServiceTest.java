@@ -48,7 +48,7 @@ public class CategoryServiceTest {
         //when then
         assertThatThrownBy(() -> categoryService.findById(categoryId))
                 .isInstanceOf(ResourceNotFoundException.class)
-                .hasMessage(STR."Category ID: \{categoryId} not found");
+                .hasMessage("Category ID: " + categoryId + " not found");
     }
 
 }

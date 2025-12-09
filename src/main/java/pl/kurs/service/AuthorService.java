@@ -13,7 +13,7 @@ public class AuthorService {
 
     public Author findAuthorById(Long id) {
         return authorRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(STR."Author with id: \{id} not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Author with id: " + id + " not found"));
     }
 
 }

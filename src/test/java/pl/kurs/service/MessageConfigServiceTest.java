@@ -70,6 +70,6 @@ public class MessageConfigServiceTest {
         //when then
         assertThatThrownBy(() -> messageConfigService.findMessageConfigByCode(code))
                 .isInstanceOf(NoSuchElementException.class)
-                .hasMessage(STR."Message Config not found for code: \{code}");
+                .hasMessage("Message Config not found for code: " + code);
     }
 }

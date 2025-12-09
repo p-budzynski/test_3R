@@ -48,7 +48,7 @@ public class ClientService {
     @Transactional
     public Client getClientById(Long id) {
         return clientRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(STR."Client not found with id: \{id}"));
+                .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: " + id));
     }
 
     @Transactional

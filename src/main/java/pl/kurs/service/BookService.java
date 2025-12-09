@@ -38,6 +38,6 @@ public class BookService {
 
     public Book findBookById(Long id) {
         return bookRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(STR."Book with id: \{id} not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Book with id: " + id + " not found"));
     }
 }

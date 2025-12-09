@@ -48,6 +48,6 @@ class AuthorServiceTest {
         //when then
         assertThatThrownBy(() -> authorService.findAuthorById(authorId))
                 .isInstanceOf(ResourceNotFoundException.class)
-                .hasMessage(STR."Author with id: \{authorId} not found");
+                .hasMessage("Author with id: " + authorId + " not found");
     }
 }

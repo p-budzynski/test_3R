@@ -173,7 +173,7 @@
 			"name": "Subscription",
 			"item": [
 				{
-					"name": "Create subscription by category",
+					"name": "Create subscription with category",
 					"request": {
 						"auth": {
 							"type": "noauth"
@@ -182,7 +182,38 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"clientId\": 1,\r\n  \"subscriptionType\": \"CATEGORY\",\r\n  \"subscriptionValue\": \"Fantasy\"\r\n}",
+							"raw": "{\r\n  \"clientId\": 1,\r\n  \"categoryId\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/subscriptions",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"subscriptions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create subscription with author",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"clientId\": 2,\r\n  \"authorId\": 1\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"

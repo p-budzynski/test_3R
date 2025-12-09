@@ -16,7 +16,7 @@ public class MessageConfigService {
     @Cacheable(value = "emailTemplates", key = "#code")
     public MessageConfig findMessageConfigByCode(String code) {
         return messageConfigRepository.findByCode(code)
-                .orElseThrow(() -> new NoSuchElementException(STR."Message Config not found for code: \{code}"));
+                .orElseThrow(() -> new NoSuchElementException("Message Config not found for code: " + code));
     }
 
 }

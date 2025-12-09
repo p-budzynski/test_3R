@@ -1,17 +1,16 @@
 package pl.kurs.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.kurs.dto.SubscriptionDto;
 import pl.kurs.entity.Client;
 import pl.kurs.entity.Subscription;
+import pl.kurs.exception.InvalidSubscriptionException;
+import pl.kurs.exception.SubscriptionAlreadyExistsException;
 import pl.kurs.mapper.SubscriptionMapper;
 import pl.kurs.repository.SubscriptionRepository;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -25,6 +24,10 @@ public class SubscriptionService {
 
     public SubscriptionDto createSubscription(SubscriptionDto dto) {
         Client client = clientService.getVerifiedClientById(dto.getClientId());
+
+        if (subscriptionExists(dto)) {
+            throw new SubscriptionAlreadyExistsException("Subscription for client id: " + dto.getClientId() + " is already exists");
+        }
 
         Subscription subscription = subscriptionMapper.dtoToEntity(dto);
         subscription.setClient(client);
@@ -41,4 +44,18 @@ public class SubscriptionService {
     public List<Subscription> findByAuthorIdOrCategoryId(Long authorId, Long categoryId) {
         return subscriptionRepository.findByAuthorIdOrCategoryId(authorId, categoryId);
     }
+
+    private boolean subscriptionExists(SubscriptionDto dto) {
+        if ((dto.getAuthorId() == null && dto.getCategoryId() == null) ||
+            (dto.getAuthorId() != null && dto.getCategoryId() != null)) {
+            throw new InvalidSubscriptionException("Subscription must have either authorId OR categoryId, but not both.");
+        }
+
+        if (dto.getCategoryId() != null) {
+            return subscriptionRepository.existsByClientIdAndCategoryId(dto.getClientId(), dto.getCategoryId());
+        } else {
+            return subscriptionRepository.existsByClientIdAndAuthorId(dto.getClientId(), dto.getAuthorId());
+        }
+    }
+
 }

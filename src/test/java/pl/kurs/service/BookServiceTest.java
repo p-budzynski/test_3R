@@ -95,7 +95,7 @@ public class BookServiceTest {
         //when then
         assertThatThrownBy(() -> bookService.findBookById(bookId))
                 .isInstanceOf(ResourceNotFoundException.class)
-                .hasMessage(STR."Book with id: \{bookId} not found");
+                .hasMessage("Book with id: " + bookId + " not found");
     }
 
 }
