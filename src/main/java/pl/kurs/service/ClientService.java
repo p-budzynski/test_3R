@@ -8,18 +8,16 @@ import pl.kurs.entity.Client;
 import pl.kurs.exception.EmailNotVerifiedException;
 import pl.kurs.exception.ResourceNotFoundException;
 import pl.kurs.mapper.ClientMapper;
-import pl.kurs.messaging.producer.EmailProducer;
 import pl.kurs.repository.ClientRepository;
 
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class ClientService {
 
     private final ClientRepository clientRepository;
-    private final EmailProducer emailProducer;
+    private final NotificationService notificationService;
     private final ClientMapper clientMapper;
 
     @Transactional
@@ -30,11 +28,12 @@ public class ClientService {
         client.setVerificationToken(verificationToken);
 
         Client savedClient = clientRepository.save(client);
-        emailProducer.sendVerificationEmail(dto.getEmail(), verificationToken);
+        notificationService.publishClientRegistryNotification(dto.getEmail(), verificationToken);
 
         return clientMapper.entityToDto(savedClient);
     }
 
+    @Transactional
     public boolean verifyEmail(String token) {
         return clientRepository.findByVerificationToken(token)
                 .map(client -> {
@@ -46,13 +45,13 @@ public class ClientService {
                 .orElse(false);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public Client getClientById(Long id) {
         return clientRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Client not found with id: " + id));
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public Client getVerifiedClientById(Long id) {
         Client client = getClientById(id);
         if (!client.getEmailVerified()) {

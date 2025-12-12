@@ -17,8 +17,9 @@ public class BookDto {
     @Min(value = 1, message = "ID must be at least 1", groups = {Update.class, Delete.class})
     private Long id;
 
-    @NotBlank(message = "Author is required")
-    private String author;
+    @NotNull(message = "Author ID is required")
+    @Positive(message = "Author ID must be greater than 0")
+    private Long authorId;
 
     @NotBlank(message = "Title is required")
     private String title;

@@ -3,6 +3,7 @@ package pl.kurs.mapper;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import pl.kurs.dto.ClientDto;
+import pl.kurs.entity.Category;
 import pl.kurs.entity.Client;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -51,6 +52,15 @@ public class ClientMapperTest {
     void shouldReturnNullWhenDtoToEntityGivenNull() {
         //when then
         assertThat(clientMapper.dtoToEntity(null)).isNull();
+    }
+
+    @Test
+    void shouldReturnNullWhenIdIsNull() {
+        //when
+        Client result = clientMapper.clientFromId(null);
+
+        //then
+        assertThat(result).isNull();
     }
 
     private Client createTestClient() {

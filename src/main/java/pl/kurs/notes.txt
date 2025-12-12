@@ -16,3 +16,74 @@ Stworz api do:
 
 przy projektowaniu rozwiazania miej na uwadze ze pracujesz dla biblioteki publicznej
 gdzie jest wolumen milionow ksiazek i milionow klientow.
+
+
+--------------------------------------------------------------------------
+od Waldka:
+
+@Async("notificationExecutor")
+    @Transactional(readOnly = true)
+    public CompletableFuture<Integer> processBatch(LocalDate date, int page)
+do czego uzyles completable future???
+
+aaa juz widze
+
+CompletableFuture<Integer> batchResult = processBatch(date, page);
+
+no to nauka springa do poprawy
+uzywasz adnotacji springowych na metodach wolanych bezposrednio
+
+iteracja powtorkowa ze springa.
+
+
+od Tomka:
+
+co do testu to mam pare drobnych rzeczy:
+    @PrePersist
+    protected void onCreate() {
+        if (addedDate == null) {
+            addedDate = LocalDate.now();
+        }
+    }
+Mozna to chyba zrobic tak:
+@CreationTimestamp
+private LocalDate addedDate;
+
+Klasa Client - moim zdaniem tutaj ten token nie powinien byc przetrzymywany, to powinna byc osobna tabela, mozliwe ze nawet relacja inna niz @OneToOne, bo czasami moze byc tak ze mail nie dojdzie i trzeba go ponowic. Dodatkowo
+
+Klasa Subscription - index na subscriptionType nam moim zdaniem za duzo tu nie da - mamy tylko dwa typy, wiec insert bedzie trwal duzej, a zysk bedzie maly - bo tak czy siak polowa danych jest do "przejrzenia" przy query. Indexy zakladamy najczesciej na pola po ktorych mozemy jakos zdefiniowac unikalnosc, np. pesel - przejrzyj tez pod tym kątem pozostale encje.
+
+EmailProducer: moim zdaniem te tytuly maili, tresc etc. powinna byc albo w bazie, albo w configu - wtedy mozesz sobie dopasowac tresc np. do jezyka w ktorym operuje klient ;)
+
+Testy integracyjne - controllery:
+Fajnie ze sprawdziles odpowiedz, ale ja zazwyczaj jak pisze test, to sprawdzam jeszcze czy stan w bazie sie zmienil, np. czy subskrypcja została oznaczona jako aktywna.
+
+Unit testy wygladaja spoko :)
+Plus to co Waldek napisal
+
+
+
+*********************************************************
+WAZNE: Jezeli mamy adnotacje springowe i funkcje nad ktorymi sa te adnotacje sa wywolywane z tej samej klasy
+- to te adnotacje nam nie zadziala, bo mechanizm proxy nie bedzie zalaczony
+
+https://medium.com/javaguides/12-best-practices-every-spring-boot-developer-should-follow-4d678d0d5ed6
+https://medium.com/springboot-dev-hub/spring-boot-best-practices-for-developers-3f3bdffa0090
+https://medium.com/@davoud.badamchi/9-common-mistakes-in-spring-boot-development-and-how-to-avoid-them-ce4e2707f015
+https://blog.devgenius.io/top-10-spring-boot-rest-api-mistakes-and-how-to-avoid-them-2025-update-1c73ef6e2c73
+
+
+
+
+1. Zapis ksiazki
+2. Utworzenie eventu BookEventCreated i opublikowanie go na wewnetrzna "kolejke" springa
+3. Odebranie eventu w tej samej aplikacji
+4. Utworzenie wpisow do tabeli SubscriptionNotification (po odebraniu notyfikacji - wyciagniecie wszystkich subksrypcji)
+5. Job ktory o 00 odczyta wszystkie wpisy w SubscriptionNotification, wysle maila i usunie przetworzone wpisy
+
+
+        // 1. Dodac nowa klase do obslugi notyfikacji o nowo dodanej ksiazce
+        // 2. Wyszukujesz ksiazke po jej id
+        // 3. Znalezc wszystkie subksrypcje gdzie id_authora = id_authora w nowo dodanej ksiazce lub id_kategorii = id_kategorii w nowo dodanej ksiazce
+        // 4. zbudowac wpisy notyfikacji do tabeli SubscriptionNotification
+        // 5. O 00 job odpala sie i pobiera wszystkie notyfikacje, grupujac je po id klienta, wysyla zbiorczego maila

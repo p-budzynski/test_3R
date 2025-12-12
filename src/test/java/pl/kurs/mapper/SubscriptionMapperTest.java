@@ -1,16 +1,33 @@
 package pl.kurs.mapper;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 import pl.kurs.dto.SubscriptionDto;
+import pl.kurs.entity.Author;
+import pl.kurs.entity.Category;
 import pl.kurs.entity.Client;
 import pl.kurs.entity.Subscription;
-import pl.kurs.entity.SubscriptionType;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@ExtendWith(MockitoExtension.class)
 public class SubscriptionMapperTest {
+
     private final SubscriptionMapper subscriptionMapper = Mappers.getMapper(SubscriptionMapper.class);
+    private final AuthorMapper authorMapper = Mappers.getMapper(AuthorMapper.class);
+    private final ClientMapper clientMapper = Mappers.getMapper(ClientMapper.class);
+    private final CategoryMapper categoryMapper = Mappers.getMapper(CategoryMapper.class);
+
+    @BeforeEach
+    void before() {
+        ReflectionTestUtils.setField(subscriptionMapper,"authorMapper", authorMapper);
+        ReflectionTestUtils.setField(subscriptionMapper, "clientMapper", clientMapper);
+        ReflectionTestUtils.setField(subscriptionMapper, "categoryMapper", categoryMapper);
+    }
 
     @Test
     void shouldMapEntityToDto() {
@@ -39,24 +56,7 @@ public class SubscriptionMapperTest {
         //then
         assertThat(entity)
                 .usingRecursiveComparison()
-                .ignoringFields("client")
                 .isEqualTo(testSubscription);
-    }
-
-    @Test
-    void shouldMapDtoToEntityWhenSubscriptionTypeIsNull() {
-        //given
-        SubscriptionDto testSubscriptionDto = createSubscriptionDtoTest();
-        testSubscriptionDto.setSubscriptionType(null);
-        testSubscriptionDto.setSubscriptionValue(null);
-
-        //when
-        Subscription entity = subscriptionMapper.dtoToEntity(testSubscriptionDto);
-
-        //then
-        assertThat(entity.getId()).isEqualTo(testSubscriptionDto.getId());
-        assertThat(entity.getSubscriptionType()).isNull();
-        assertThat(entity.getSubscriptionValue()).isNull();
     }
 
     @Test
@@ -72,6 +72,32 @@ public class SubscriptionMapperTest {
     }
 
     @Test
+    void shouldReturnNullAuthorIdsWhenFieldsAreNull() {
+        //given
+        Subscription testSubscription = createSubscriptionTest();
+        testSubscription.setAuthor(null);
+
+        //when
+        SubscriptionDto dto = subscriptionMapper.entityToDto(testSubscription);
+
+        //then
+        assertThat(dto.getAuthorId()).isNull();
+    }
+
+    @Test
+    void shouldReturnNullCategoryIdsWhenFieldsAreNull() {
+        //given
+        Subscription testSubscription = createSubscriptionTest();
+        testSubscription.setCategory(null);
+
+        //when
+        SubscriptionDto dto = subscriptionMapper.entityToDto(testSubscription);
+
+        //then
+        assertThat(dto.getCategoryId()).isNull();
+    }
+
+    @Test
     void shouldReturnNullClientIdsWhenFieldsAreNull() {
         //given
         Subscription testSubscription = createSubscriptionTest();
@@ -82,32 +108,19 @@ public class SubscriptionMapperTest {
 
         //then
         assertThat(dto.getClientId()).isNull();
-        assertThat(dto.getSubscriptionType()).isEqualTo(testSubscription.getSubscriptionType().toString());
-        assertThat(dto.getSubscriptionValue()).isEqualTo(testSubscription.getSubscriptionValue());
-    }
-
-    @Test
-    void shouldReturnNullSubscriptionTypeWhenFieldsAreNull() {
-        //given
-        Subscription testSubscription = createSubscriptionTest();
-        testSubscription.setSubscriptionType(null);
-        testSubscription.setSubscriptionValue(null);
-
-        //when
-        SubscriptionDto dto = subscriptionMapper.entityToDto(testSubscription);
-
-        //then
-        assertThat(dto.getClientId()).isEqualTo(testSubscription.getClient().getId());
-        assertThat(dto.getSubscriptionType()).isNull();
-        assertThat(dto.getSubscriptionValue()).isNull();
     }
 
     private Subscription createSubscriptionTest() {
-        Client clientTest = new Client(1L, "John", "Cena", "j.cena@mail.com", "Tampa", true, null, null);
-        return new Subscription(1L, clientTest, SubscriptionType.CATEGORY, "Science");
+        Client clientTest = new Client();
+        clientTest.setId(1L);
+        Author authorTest = new Author();
+        authorTest.setId(1L);
+        Category categoryTest = new Category();
+        categoryTest.setId(1L);
+        return new Subscription(1L, clientTest, authorTest, categoryTest);
     }
 
     private SubscriptionDto createSubscriptionDtoTest() {
-        return new SubscriptionDto(1L, 1L, "CATEGORY", "Science");
+        return new SubscriptionDto(1L, 1L, 1L, 1L);
     }
 }

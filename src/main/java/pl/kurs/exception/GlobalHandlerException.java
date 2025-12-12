@@ -76,5 +76,16 @@ public class GlobalHandlerException {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST.value()).body(response);
     }
 
+    @ExceptionHandler(SubscriptionAlreadyExistsException.class)
+    public ResponseEntity<ExceptionResponseDto> handleSubscriptionAlreadyExistsException(SubscriptionAlreadyExistsException exception) {
+        ExceptionResponseDto response = new ExceptionResponseDto(exception.getMessage(), HttpStatus.CONFLICT.toString(), LocalDateTime.now());
+        return ResponseEntity.status(HttpStatus.CONFLICT.value()).body(response);
+    }
+
+    @ExceptionHandler(InvalidSubscriptionException.class)
+    public ResponseEntity<ExceptionResponseDto> handleInvalidSubscriptionException(InvalidSubscriptionException exception) {
+        ExceptionResponseDto response = new ExceptionResponseDto(exception.getMessage(), HttpStatus.BAD_REQUEST.toString(), LocalDateTime.now());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST.value()).body(response);
+    }
 
 }

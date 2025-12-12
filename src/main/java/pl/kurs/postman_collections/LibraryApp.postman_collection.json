@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "cc9e0faa-7b81-4530-b064-0da3495416f1",
+		"_postman_id": "a4d95e9e-742a-4b2b-883e-6706f1f193cd",
 		"name": "LibraryApp",
-		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
-		"_exporter_id": "40593793"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "48853823"
 	},
 	"item": [
 		{
@@ -19,14 +19,24 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"author\": \"J.K. Rowling\",\r\n  \"title\": \"Harry Potter and the Sorcerer's Stone\",\r\n  \"categoryId\": 3,\r\n  \"pageCount\": 309\r\n}",
+							"raw": "{\r\n  \"authorId\": 3,\r\n  \"title\": \"Teoria wszystkiego, czyli krótka historia wszechświata\",\r\n  \"categoryId\": 8,\r\n  \"pageCount\": 196\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
 								}
 							}
 						},
-						"url": "http://localhost:8081/books"
+						"url": {
+							"raw": "http://localhost:8081/books",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"books"
+							]
+						}
 					},
 					"response": []
 				},
@@ -47,7 +57,17 @@
 								}
 							}
 						},
-						"url": "http://localhost:8081/books"
+						"url": {
+							"raw": "http://localhost:8081/books",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"books"
+							]
+						}
 					},
 					"response": []
 				}
@@ -73,7 +93,17 @@
 								}
 							}
 						},
-						"url": "http://localhost:8081/clients"
+						"url": {
+							"raw": "http://localhost:8081/clients",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"clients"
+							]
+						}
 					},
 					"response": []
 				},
@@ -94,7 +124,17 @@
 								}
 							}
 						},
-						"url": "http://localhost:8081/clients"
+						"url": {
+							"raw": "http://localhost:8081/clients",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"clients"
+							]
+						}
 					},
 					"response": []
 				},
@@ -133,7 +173,7 @@
 			"name": "Subscription",
 			"item": [
 				{
-					"name": "Create subscription",
+					"name": "Create subscription with category",
 					"request": {
 						"auth": {
 							"type": "noauth"
@@ -142,14 +182,55 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"clientId\": 1,\r\n  \"subscriptionType\": \"CATEGORY\",\r\n  \"subscriptionValue\": \"Fantasy\"\r\n}",
+							"raw": "{\r\n  \"clientId\": 1,\r\n  \"categoryId\": 1\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
 								}
 							}
 						},
-						"url": "http://localhost:8081/subscriptions"
+						"url": {
+							"raw": "http://localhost:8081/subscriptions",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"subscriptions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create subscription with author",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"clientId\": 2,\r\n  \"authorId\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/subscriptions",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"subscriptions"
+							]
+						}
 					},
 					"response": []
 				},
@@ -161,7 +242,77 @@
 						},
 						"method": "DELETE",
 						"header": [],
-						"url": "http://localhost:8081/subscriptions/1"
+						"url": {
+							"raw": "http://localhost:8081/subscriptions/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"subscriptions",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create subscription - bad request",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"clientId\": null,\r\n  \"authorId\": 0,\r\n  \"categoryId\": \"null\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/subscriptions",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"subscriptions"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Job",
+			"item": [
+				{
+					"name": "Scheduler run",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/job/run",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"job",
+								"run"
+							]
+						}
 					},
 					"response": []
 				}

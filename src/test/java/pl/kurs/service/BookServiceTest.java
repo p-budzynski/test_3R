@@ -5,18 +5,20 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.ApplicationEventPublisher;
 import pl.kurs.dto.BookDto;
+import pl.kurs.entity.Author;
 import pl.kurs.entity.Book;
 import pl.kurs.entity.Category;
+import pl.kurs.exception.ResourceNotFoundException;
 import pl.kurs.mapper.BookMapper;
 import pl.kurs.repository.BookRepository;
 
-import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -29,10 +31,13 @@ public class BookServiceTest {
     private CategoryService categoryServiceMock;
 
     @Mock
-    private BookMapper bookMapperMock;
+    private AuthorService authorServiceMock;
 
     @Mock
-    private ApplicationEventPublisher applicationEventPublisherMock;
+    private NotificationService notificationServiceMock;
+
+    @Mock
+    private BookMapper bookMapperMock;
 
     @InjectMocks
     private BookService bookService;
@@ -40,48 +45,57 @@ public class BookServiceTest {
     @Test
     void shouldCreateBook() {
         //given
-        BookDto expectedDto = new BookDto(2L, "Test author", "Test title", 1L, 300);
-        BookDto bookDto = new BookDto(null, "Test author", "Test title", 1L, 300);
-        Category category = new Category(1L, "Fantasy");
-        Book book = new Book(null, "Test author", "Test title", null, 300, LocalDate.of(2025, 1, 15));
-        Book savedBook = new Book(2L, "Test author", "Test title", category, 300, LocalDate.of(2025, 1, 15));
+        BookDto expectedDto = new BookDto(1L, 1L, "Test title", 1L, 300);
+        BookDto bookDto = new BookDto(null, 1L, "Test title", 1L, 300);
+        Author author = new Author(1L, "Test author", null);
+        Category category = new Category(1L, "Test category");
+        Book book = new Book(null, "Test title", category, 300, author);
+        Book savedBook = new Book(1L, "Test title", category, 300, author);
 
         when(categoryServiceMock.findById(1L)).thenReturn(category);
+        when(authorServiceMock.findAuthorById(1L)).thenReturn(author);
         when(bookMapperMock.dtoToEntity(bookDto)).thenReturn(book);
         when(bookRepositoryMock.save(any(Book.class))).thenReturn(savedBook);
         when(bookMapperMock.entityToDto(savedBook)).thenReturn(expectedDto);
+        doNothing().when(notificationServiceMock).publishCreatedBookNotification(book);
 
         //when
         BookDto result = bookService.createBook(bookDto);
 
         //then
         assertThat(result).isNotNull();
-        assertThat(result.getId()).isEqualTo(2L);
+        assertThat(result.getId()).isEqualTo(1L);
         assertThat(result.getTitle()).isEqualTo("Test title");
-        assertThat(result.getAuthor()).isEqualTo("Test author");
+        assertThat(result.getAuthorId()).isEqualTo(1L);
         assertThat(result.getCategoryId()).isEqualTo(1L);
         assertThat(result.getPageCount()).isEqualTo(300);
     }
 
     @Test
-    void shouldFindBookById() {
-        // given
-        Book savedBook = new Book(2L, "Test author", "Test title", new Category(), 300, LocalDate.of(2025, 1, 15));
-        Long bookId = 2L;
-        when(bookRepositoryMock.findById(bookId)).thenReturn(Optional.of(savedBook));
+    void shouldReturnBookById() {
+        //given
+        Long bookId = 1L;
+        Book book = new Book(bookId, "Test title", new Category(), 300, new Author());
+        when(bookRepositoryMock.findById(bookId)).thenReturn(Optional.of(book));
 
         //when
-        Optional<Book> result = bookService.findById(bookId);
+        Book result = bookService.findBookById(bookId);
 
         //then
-        assertThat(result).isPresent();
-        assertThat(result.get()).isEqualTo(savedBook);
-        assertThat(result.get().getId()).isEqualTo(savedBook.getId());
-        assertThat(result.get().getAuthor()).isEqualTo(savedBook.getAuthor());
-        assertThat(result.get().getTitle()).isEqualTo(savedBook.getTitle());
-        assertThat(result.get().getCategory()).isEqualTo(savedBook.getCategory());
-        assertThat(result.get().getPageCount()).isEqualTo(savedBook.getPageCount());
-        assertThat(result.get().getAddedDate()).isEqualTo(savedBook.getAddedDate());
+        assertThat(result).isEqualTo(book);
+    }
+
+    @Test
+    void shouldThrowExceptionWhenBookNotFound() {
+        //given
+        Long bookId = 1L;
+        when(bookRepositoryMock.findById(bookId))
+                .thenReturn(Optional.empty());
+
+        //when then
+        assertThatThrownBy(() -> bookService.findBookById(bookId))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessage("Book with id: " + bookId + " not found");
     }
 
 }

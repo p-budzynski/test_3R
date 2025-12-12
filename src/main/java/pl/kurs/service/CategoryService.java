@@ -9,12 +9,11 @@ import pl.kurs.repository.CategoryRepository;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
 
-    @Transactional(readOnly = true)
+    @Transactional
     public Category findById(Long id) {
         return categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Category ID: " + id + " not found"));

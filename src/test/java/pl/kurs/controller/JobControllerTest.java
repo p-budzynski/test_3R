@@ -1,0 +1,99 @@
+package pl.kurs.controller;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
+import pl.kurs.entity.*;
+import pl.kurs.repository.*;
+
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@SpringBootTest
+@ActiveProfiles("test")
+@AutoConfigureMockMvc
+public class JobControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Autowired
+    private ClientRepository clientRepository;
+
+    @Autowired
+    private BookRepository bookRepository;
+
+    @Autowired
+    private AuthorRepository authorRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
+
+    @Autowired
+    private MessageConfigRepository messageConfigRepository;
+
+    @Autowired
+    private SubscriptionNotificationRepository notificationRepository;
+
+    @MockitoBean
+    private JavaMailSender mailSenderMock;
+
+    @BeforeEach
+    void before() {
+        notificationRepository.deleteAll();
+        bookRepository.deleteAll();
+        authorRepository.deleteAll();
+        categoryRepository.deleteAll();
+        clientRepository.deleteAll();
+        messageConfigRepository.deleteAll();
+    }
+
+    @Test
+    void shouldRunDailyNotificationJob() throws Exception {
+        //given
+        Client client1 = clientRepository.save(new Client(null, "Client1", "Client1", "c1@mail.com", "City1", true, null, null));
+        Client client2 = clientRepository.save(new Client(null, "Client2", "Client2", "c2@mail.com", "City2", true, null, null));
+        Author author = authorRepository.save(new Author(null, "Test Author", null));
+        Category category = categoryRepository.save(new Category(null, "Test Category"));
+        Book book = bookRepository.save(new Book(null, "Title Test", category, 100, author));
+        messageConfigRepository.save(new MessageConfig(null, "NEW_BOOKS", "TEST", "{{firstName}}\n{{bookList}}"));
+
+        notificationRepository.save(new SubscriptionNotification(null, client1, book));
+        notificationRepository.save(new SubscriptionNotification(null, client2, book));
+
+        //when
+        mockMvc.perform(post("/job/run"))
+                .andExpect(status().isOk());
+
+        //then
+        ArgumentCaptor<SimpleMailMessage> mailCaptor = ArgumentCaptor.forClass(SimpleMailMessage.class);
+
+        verify(mailSenderMock, timeout(3000).times(2))
+                .send(mailCaptor.capture());
+
+        List<SimpleMailMessage> mails = mailCaptor.getAllValues();
+
+        assertThat(mails)
+                .extracting(SimpleMailMessage::getTo)
+                .containsExactlyInAnyOrder(
+                        new String[]{client1.getEmail()},
+                        new String[]{client2.getEmail()}
+                );
+
+        assertThat(mails.get(0).getText()).contains("Client1");
+        assertThat(mails.get(1).getText()).contains("Client2");
+    }
+
+}

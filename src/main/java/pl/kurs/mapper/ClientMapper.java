@@ -14,4 +14,11 @@ public interface ClientMapper {
     Client dtoToEntity(ClientDto clientDto);
 
     ClientDto entityToDto(Client entity);
+
+    default Client clientFromId(Long id) {
+        if (id == null) return null;
+        Client client = new Client();
+        client.setId(id);
+        return client;
+    }
 }

@@ -1,18 +1,14 @@
 package pl.kurs.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
-import org.testcontainers.containers.RabbitMQContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 import pl.kurs.dto.ClientDto;
 import pl.kurs.entity.Client;
 import pl.kurs.repository.ClientRepository;
@@ -22,23 +18,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@Testcontainers
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
 public class ClientControllerTest {
-
-    @Container
-    static RabbitMQContainer rabbitMQContainer = new RabbitMQContainer("rabbitmq:4.1.2")
-            .withExposedPorts(5672, 15672);
-
-    @DynamicPropertySource
-    static void configureRabbit(DynamicPropertyRegistry registry) {
-        registry.add("spring.rabbitmq.host", rabbitMQContainer::getHost);
-        registry.add("spring.rabbitmq.username", rabbitMQContainer::getAdminUsername);
-        registry.add("spring.rabbitmq.password", rabbitMQContainer::getAdminPassword);
-        registry.add("spring.rabbitmq.port", () -> rabbitMQContainer.getMappedPort(5672));
-    }
 
     @Autowired
     private MockMvc mockMvc;
@@ -48,6 +31,11 @@ public class ClientControllerTest {
 
     @Autowired
     private ClientRepository clientRepository;
+
+    @BeforeEach
+    void before() {
+        clientRepository.deleteAll();
+    }
 
     @Test
     void shouldCreateClient() throws Exception {

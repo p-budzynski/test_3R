@@ -11,7 +11,6 @@ import pl.kurs.entity.Client;
 import pl.kurs.exception.EmailNotVerifiedException;
 import pl.kurs.exception.ResourceNotFoundException;
 import pl.kurs.mapper.ClientMapper;
-import pl.kurs.messaging.producer.EmailProducer;
 import pl.kurs.repository.ClientRepository;
 
 import java.util.Optional;
@@ -28,7 +27,7 @@ public class ClientServiceTest {
     private ClientRepository clientRepositoryMock;
 
     @Mock
-    private EmailProducer emailProducerMock;
+    private NotificationService notificationServiceMock;
 
     @Mock
     private ClientMapper clientMapperMock;
@@ -51,6 +50,7 @@ public class ClientServiceTest {
 
             when(clientMapperMock.dtoToEntity(clientDto)).thenReturn(client);
             when(clientRepositoryMock.save(any(Client.class))).thenReturn(savedClient);
+            doNothing().when(notificationServiceMock).publishClientRegistryNotification(clientDto.getEmail(), expectedToken);
             when(clientMapperMock.entityToDto(savedClient)).thenReturn(clientDto);
 
             //when
@@ -78,7 +78,7 @@ public class ClientServiceTest {
     }
 
     @Test
-    void shouldGetClientByIdSuccessfully() {
+    void shouldReturnClientById() {
         //given
         Long clientId = 1L;
         Client savedClient = createSavedClient();
@@ -92,9 +92,9 @@ public class ClientServiceTest {
     }
 
     @Test
-    void shouldThrowResourceNotFoundExceptionWhenClientNotFoundById() {
+    void shouldThrowExceptionWhenClientNotFoundById() {
         //given
-        Long clientId = 999L;
+        Long clientId = 1L;
         when(clientRepositoryMock.findById(clientId)).thenReturn(Optional.empty());
 
         //when then
@@ -104,7 +104,7 @@ public class ClientServiceTest {
     }
 
     @Test
-    void shouldGetVerifiedClientByIdSuccessfully() {
+    void shouldReturnVerifiedClientById() {
         //given
         Long clientId = 1L;
         Client verifiedClient = createVerifiedClient(clientId);
@@ -120,7 +120,7 @@ public class ClientServiceTest {
     }
 
     @Test
-    void shouldThrowEmailNotVerifiedExceptionWhenClientEmailNotVerified() {
+    void shouldThrowEExceptionWhenClientEmailNotVerified() {
         //given
         Long clientId = 1L;
         Client unverifiedClient = createUnverifiedClient(clientId);

@@ -4,26 +4,22 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import pl.kurs.service.NotificationBatchService;
-
-import java.time.LocalDate;
+import pl.kurs.service.SubscriptionNotificationReaderService;
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
 public class DailyNotificationScheduler {
+    private final SubscriptionNotificationReaderService notificationService;
 
-    private final NotificationBatchService notificationBatchService;
-
-    @Scheduled(cron = "${app.scheduling.daily-notifications:0 0 0 * * *}")
+    @Scheduled(cron = "${app.scheduling.daily-notifications}")
     public void runDailyNotificationJob() {
         try {
-            LocalDate yesterday = LocalDate.now().minusDays(1);
-            notificationBatchService.processAllNotifications(yesterday);
-
+            notificationService.processAllNotificationsStream();
             log.info("Daily notification job completed successfully");
-        } catch (Exception e) {
-            log.error("Daily notification job failed", e);
+        } catch (Exception ex) {
+            log.error("Daily notification job failed", ex);
         }
     }
+
 }
